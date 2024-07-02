@@ -18,14 +18,7 @@ import imageio.v2 as iio
 
 
 def bertSent_embeding(sentences):
-    """
-    Input a list of sentence tokens
-    
-    Output a list of latent vectors, each vector is a sentence representation
-    
-    
-    """
-    
+       
     print("Token Embedding....")
     ## Add sentence head and tail as BERT requested
     marked_sent = ["[CLS] " +item + " [SEP]" for item in sentences]    
@@ -40,12 +33,12 @@ def bertSent_embeding(sentences):
     indexed_tokens = [tokenizer.convert_tokens_to_ids(item) for item in tokenized_sent]
     tokens_tensor = [torch.tensor([item]) for item in indexed_tokens]
     
-    ## adding segment id as BERT requested
+    ## adding segment id 
     segments_ids = [[1] * len(item) for ind,item in enumerate(tokenized_sent)]
     segments_tensors = [torch.tensor([item]) for item in segments_ids]
     
     print("Sending tokens into BERT pre-trained model...")
-    ## load BERT base model and set to evaluation mode
+    ## loading BERT base model and set to evaluation mode
     bert_model = BertModel.from_pretrained('bert-large-uncased')
     bert_model.eval()
     
@@ -67,14 +60,9 @@ def bertSent_embeding(sentences):
     return sentence_embedding_list
 
 def kmeans_sumIndex(sentence_embedding_list):
-    """
-    Input a list of embeded sentence vectors
     
-    Output an list of indices of sentence in the paragraph, represent the clustering of key sentences
+    #Kmeans is used here for clustering
     
-    Note: Kmeans is used here for clustering
-    
-    """
     n_clusters = np.ceil(len(sentence_embedding_list)**0.66)
     kmeans = KMeans(n_clusters=int(n_clusters))
     kmeans = kmeans.fit(sentence_embedding_list)
